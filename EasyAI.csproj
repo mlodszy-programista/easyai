@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <AnalysisLevel>none</AnalysisLevel>
+	<LlamaCpuVariant>avx2</LlamaCpuVariant>
+	  <!-- noavx | avx | avx2 | avx512 -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LLamaSharp" Version="0.25.0" />
+    <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.25.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+  </ItemGroup>
+
+	<Target Name="PruneLlamaCpuVariants" BeforeTargets="ResolveCopyToPublishDirectory">
+		<ItemGroup>
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition=" $([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)')).StartsWith('runtimes\win-x64\native\noavx\') AND '$(LlamaCpuVariant)' != 'noavx' " />
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition=" $([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)')).StartsWith('runtimes\win-x64\native\avx\') AND '$(LlamaCpuVariant)' != 'avx' " />
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition=" $([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)')).StartsWith('runtimes\win-x64\native\avx2\') AND '$(LlamaCpuVariant)' != 'avx2' " />
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition=" $([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)')).StartsWith('runtimes\win-x64\native\avx512\') AND '$(LlamaCpuVariant)' != 'avx512' " />
+		</ItemGroup>
+	</Target>
+</Project>
